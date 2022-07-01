@@ -3,9 +3,10 @@ const express = require('express');
 
 const app = express();
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
-);
+app.use(express.json());
+
+const toursDB = `${__dirname}/dev-data/data/tours-simple.json`;
+const tours = JSON.parse(fs.readFileSync(toursDB));
 
 app.get('/api/v1/tours', (req, res) => {
   res.status(200).json({
@@ -14,6 +15,21 @@ app.get('/api/v1/tours', (req, res) => {
     data: {
       tours,
     },
+  });
+});
+
+app.post('/api/v1/tours', (req, res) => {
+  const newId = tours[tours.length - 1].id + 1;
+  const newTour = {
+    id: newId,
+    ...req.body,
+  };
+  tours.push(newTour);
+  fs.writeFile(toursDB, JSON.stringify(tours), (err) => {
+    res.status(201).json({
+      status: 'success',
+      addedTour: newTour,
+    });
   });
 });
 
