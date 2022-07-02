@@ -16,6 +16,7 @@ app.use((req, res, next) => {
 const toursDB = `${__dirname}/dev-data/data/tours-simple.json`;
 const tours = JSON.parse(fs.readFileSync(toursDB));
 
+// Tours
 const getAllTours = (req, res) => {
   res.status(200).json({
     status: 'success',
@@ -97,13 +98,38 @@ const deleteTour = (req, res) => {
   });
 };
 
+// Users
+const getAllUsers = (req, res) => {
+  res.status(500).json({
+    status: 'error',
+    message: 'This route is not yet defined',
+  });
+};
+
+const createUser = (req, res) => {};
+
+const getUser = (req, res) => {};
+
+const updateUser = (req, res) => {};
+
+const deleteUser = (req, res) => {};
+
 // ========== Routes ==================
+// Tours
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
   .route('/api/v1/tours/:id')
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// Users
+app.route('/api/v1/users').get(getAllUsers).post(createUser);
+app
+  .route('/api/v1/users/:id')
+  .get(getUser)
+  .patch(updateUser)
+  .delete(deleteUser);
 
 // ========== Server starting ==================
 const port = 8000;
