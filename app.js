@@ -14,7 +14,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ========== Routes ==================
+// ========== Mounting Routers ==================
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
