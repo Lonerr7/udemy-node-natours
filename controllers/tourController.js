@@ -54,7 +54,7 @@ exports.createTour = (req, res) => {
     ...req.body,
   };
   tours.push(newTour);
-  fs.writeFile(toursDB, JSON.stringify(tours), (err) => {
+  fs.writeFile(toursDB, JSON.stringify(tours), () => {
     res.status(201).json({
       status: 'success',
       addedTour: newTour,
