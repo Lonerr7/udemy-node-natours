@@ -1,10 +1,16 @@
 const fs = require('fs');
 const Tour = require('../models/tourModel');
 
-exports.getAllTours = async (_, res) => {
+exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // BUILD QUERY
+    const { page, sort, limit, fields, ...queryObj } = req.query;
+    const query = Tour.find(queryObj);
 
+    // EXECUTE QUERY
+    const tours = await query;
+
+    // SEND RESPONSE
     res.status(200).json({
       status: 'success',
       results: tours.length,
