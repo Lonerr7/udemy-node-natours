@@ -56,13 +56,24 @@ exports.createTour = async (req, res) => {
   }
 };
 
-exports.updateTour = (_, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      updatedTour: '<Updated tour here...>',
-    },
-  });
+exports.updateTour = async (req, res) => {
+  try {
+    const updatedTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        updatedTour,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'error',
+      message: 'Invalid data sent!',
+    });
+  }
 };
 
 exports.deleteTour = (_, res) => {
