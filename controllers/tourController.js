@@ -1,17 +1,42 @@
 const fs = require('fs');
 const Tour = require('../models/tourModel');
 
-exports.getAllTours = (_, res) => {
-  res.status(200).json({
-    status: 'success',
-    // results: tours.length,
-    // data: {
-    //   tours,
-    // },
-  });
+exports.getAllTours = async (_, res) => {
+  try {
+    const tours = await Tour.find();
+
+    res.status(200).json({
+      status: 'success',
+      results: tours.length,
+      data: {
+        tours,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: error,
+    });
+  }
 };
 
-exports.getTour = (req, res) => {};
+exports.getTour = async (req, res) => {
+  try {
+    const tour = await Tour.findById(req.params.id);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'error',
+      message: error,
+    });
+  }
+};
 
 exports.createTour = async (req, res) => {
   try {
