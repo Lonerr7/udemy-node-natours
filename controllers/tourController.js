@@ -18,10 +18,18 @@ exports.getAllTours = async (req, res) => {
 
     // 2) Sorting
     if (sort) {
-      const sortBy = sort.split(',').join(' '); 
+      const sortBy = sort.split(',').join(' ');
       query = query.sort(sortBy);
     } else {
       query = query.sort('-createdAt');
+    }
+
+    // 3) Limiting fields
+    if (fields) {
+      const limitByFileds = fields.split(',').join(' ');
+      query = query.select(limitByFileds);
+    } else {
+      query = query.select('-__v')
     }
 
     // EXECUTE QUERY
