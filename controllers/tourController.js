@@ -4,7 +4,6 @@ const Tour = require('../models/tourModel');
 exports.getAllTours = async (req, res) => {
   try {
     // BUILD QUERY
-
     // 1A) Filtering
     const { page, sort, limit, fields, ...queryObj } = req.query;
 
@@ -21,7 +20,7 @@ exports.getAllTours = async (req, res) => {
       const sortBy = sort.split(',').join(' ');
       query = query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort('-createdAt _id');
     }
 
     // 3) Limiting fields
@@ -29,7 +28,19 @@ exports.getAllTours = async (req, res) => {
       const limitByFileds = fields.split(',').join(' ');
       query = query.select(limitByFileds);
     } else {
-      query = query.select('-__v')
+      query = query.select('-__v');
+    }
+
+    // 4) Pagination
+    const queriedPage = +page || 1;
+    const queriedLimit = +limit || 3;
+    const skip = (queriedPage - 1) * queriedLimit;
+
+    query = query.skip(skip).limit(queriedLimit);
+
+    if (page) {
+      const toursCount = await Tour.countDocuments();
+      if (skip >= toursCount) throw new Error('The page does not exist');
     }
 
     // EXECUTE QUERY
