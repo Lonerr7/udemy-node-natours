@@ -24,9 +24,11 @@ mongoose
   });
 
 // READ THE FILE
-const tours = JSON.parse(
+let tours = JSON.parse(
   fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
 );
+
+tours = tours.map((tour) => ({ ...tour, createdAt: new Date().toISOString() }));
 
 // IMPORT DATA TO THE DATABASE
 const importData = async () => {
