@@ -25,7 +25,7 @@ exports.APIFeatures = {
   },
   async paginate(page, limit, prevQuery, Model) {
     const queriedPage = +page || 1;
-    const queriedLimit = +limit || 3;
+    const queriedLimit = +limit || 15;
     const skip = (queriedPage - 1) * queriedLimit;
 
     if (page) {
