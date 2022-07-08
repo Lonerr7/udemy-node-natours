@@ -27,7 +27,7 @@ app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
 });
 
-// ========== Handling Errors With Express ==================
+// ========== Global Error Handling Middleware ==================
 app.use(globallErrorHandler);
 
 // ========== Server starting ==================
