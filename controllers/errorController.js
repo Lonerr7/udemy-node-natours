@@ -13,6 +13,17 @@ const hanldeDuplicateFieldsDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleValidationErrorDB = (err) => {
+  // Extract error messages from each error that occured during validation.]
+  const errorMsgs = Object.values(err.errors)
+    .map((errMsg) => errMsg.message)
+    .join('. ');
+
+  const message = `Invalid input data: ${errorMsgs}`;
+
+  return new AppError(message, 400);
+};
+
 const sendDevError = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -57,6 +68,11 @@ module.exports = (err, req, res, next) => {
     if (errCopy.name === 'CastError') errCopy = handleCastErrorDB(errCopy);
     // Handling errors with duplicate name when creating a new tour
     if (errCopy.code === 11000) errCopy = hanldeDuplicateFieldsDB(errCopy);
+    // Handling validation errors
+    if (errCopy.name === 'ValidationError')
+      errCopy = handleValidationErrorDB(errCopy);
+
+    // Sending an error response to the client
     sendProdError(errCopy, res);
   }
 };
