@@ -1,9 +1,16 @@
-const AppError = require("../utils/appError");
+const AppError = require('../utils/appError');
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}`;
 
-  return new AppError(message, 400)
+  return new AppError(message, 400);
+};
+
+const hanldeDuplicateFieldsDB = (err) => {
+  const value = err.keyValue.name;
+  const message = `Duplicate field value: ${value}. Please use another value!`;
+
+  return new AppError(message, 400);
 };
 
 const sendDevError = (err, res) => {
@@ -36,6 +43,7 @@ const sendProdError = (err, res) => {
   }
 };
 
+// Global error handler (is called whenever an error is thrown by a developer or by mongoose)
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
@@ -43,10 +51,12 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendDevError(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    // eslint-disable-next-line
     let errCopy = Object.assign(err);
 
+    // Handling errors with invalid _id
     if (errCopy.name === 'CastError') errCopy = handleCastErrorDB(errCopy);
+    // Handling errors with duplicate name when creating a new tour
+    if (errCopy.code === 11000) errCopy = hanldeDuplicateFieldsDB(errCopy);
     sendProdError(errCopy, res);
   }
 };
