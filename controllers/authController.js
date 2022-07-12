@@ -51,3 +51,29 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+// Function, which protects routes from accessing unauthorized users
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1) Get the JWT and check if it exists
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+    console.log(token);
+  }
+
+  if (!token) {
+    return next(
+      new AppError('You are not logged in! Log in to get access', 401)
+    );
+  }
+  // 2) Validate JWT (Verification)
+
+  // 3) Check if user exists
+
+  // 4) Check if users changed password after the JWT was issued
+
+  next();
+});
