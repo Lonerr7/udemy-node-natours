@@ -45,6 +45,8 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
+//* =============== Middleware functions ===================
+
 // Password encryption in pre middleware
 userSchema.pre('save', async function (next) {
   // Checking if we changed or created a password to ecnrypt it
@@ -55,6 +57,14 @@ userSchema.pre('save', async function (next) {
   // Deleting passwordConfirm after encrypting a password (passwordConfirm is not being encrypted)
   this.passwordConfirm = undefined;
 
+  next();
+});
+
+// Function which runs after we changed our password and sets new passwordChangedAt
+userSchema.pre('save', function (next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
