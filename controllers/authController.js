@@ -15,6 +15,19 @@ const signToken = (id) =>
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
+  // Creating, configuring and sending JWT inside cookie
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  res.cookie('jwt', token);
+
+  // Not showing user's password in an output when a user is created (or logged in?)
+  user.password = undefined;
+
   res.status(statusCode).json({
     status: 'success',
     token,
@@ -102,6 +115,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Function which restricts some routes from not logged in users
 exports.resitrctTo =
   (...roles) =>
   (req, res, next) => {
@@ -114,6 +128,7 @@ exports.resitrctTo =
     next();
   };
 
+// Function which triggers when user has forgotten his password
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1) Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
